@@ -87,7 +87,7 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 
 	task, ok := tasks[id]
 	if !ok {
-		http.Error(w, "Задание не найдено", http.StatusNoContent)
+		http.Error(w, "Задание не найдено", http.StatusBadRequest)
 		return
 	}
 
@@ -105,21 +105,14 @@ func getTask(w http.ResponseWriter, r *http.Request) {
 func deleteTask(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 
-	task, ok := tasks[id]
+	_, ok := tasks[id]
 	if !ok {
-		http.Error(w, "Задание не найдено", http.StatusNoContent)
-		return
-	}
-	resp, err := json.Marshal(task)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		http.Error(w, "Задание не найдено", http.StatusBadRequest)
 		return
 	}
 	delete(tasks, id)
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(resp)
-
 }
 
 func main() {
